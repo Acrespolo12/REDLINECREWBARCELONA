@@ -1,41 +1,40 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+session_start();
 
-// Basic PHP Router
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = str_replace('/REDLINECREWBARCELONA', '', $uri);
+$uri = str_replace('/public', '', $uri);
+$uri = trim($uri, '/');
 
-function route($uri) {
-    switch ($uri) {
-        case '/foro':
-            include 'foro.php';
-            break;
-        case '/rutas':
-            include 'rutas.php';
-            break;
-        case '/ofertas':
-            include 'ofertas.php';
-            break;
-        case '/perfil':
-            include 'perfil.php';
-            break;
-        case '/garage':
-            include 'garage.php';
-            break;
-        case '/admin':
-            include 'admin.php';
-            break;
-        case '/api':
-            include 'api.php';
-            break;
-        default:
+if (empty($uri) || $uri === '') {
+    header('Location: /REDLINECREWBARCELONA/public/pages/home.html');
+    exit;
+}
+
+$routes = [
+    'foro' => 'pages/foro.html',
+    'rutas' => 'pages/rutas.html',
+    'ofertas' => 'pages/ofertas.html',
+    'perfil' => 'pages/perfil.html',
+    'garage' => 'pages/garage.html',
+    'admin' => '../admin/index.php',
+    'api' => '../api/router.php',
+];
+
+foreach ($routes as $route => $file) {
+    if (strpos($uri, $route) === 0) {
+        if (file_exists($file)) {
+            include $file;
+        } else {
             http_response_code(404);
-            include '404.php'; // 404 Not Found
-            break;
+            echo "<h1>404 - Archivo no encontrado</h1>";
+        }
+        exit;
     }
 }
 
-// Get the current URI
-$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-// Call the route function
-route($requestUri);
-
+http_response_code(404);
+echo "<h1>404 - Página no encontrada</h1>";
 ?>
