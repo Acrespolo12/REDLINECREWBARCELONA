@@ -1,0 +1,25 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Configuration Files
+*.env
+*.config
+
+# Vendor Dependencies
+/vendor/
+
+# Node.js Modules
+node_modules/
+
+# Log Files
+*.log
+
+# Uploads
+/uploads/
+
+# IDE Files
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
