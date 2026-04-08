@@ -1,15 +1,16 @@
 FROM php:8.2.0-apache
 
-# Instalar extensiones PHP necesarias
+# Extensiones PHP
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Habilitar mod_rewrite de Apache
+# Apache config
 RUN a2enmod rewrite
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Copiar todos los archivos del proyecto
-COPY . /var/www/html/
+# Copiar SOLO el contenido real de la app
+COPY ./REDLINECREWBARCELONA/ /var/www/html/
 
-# Dar permisos a carpetas de uploads y logs
+# Permisos
 RUN mkdir -p /var/www/html/uploads/products \
              /var/www/html/uploads/avatars \
              /var/www/html/logs \
@@ -18,18 +19,15 @@ RUN mkdir -p /var/www/html/uploads/products \
     && chmod -R 755 /var/www/html/uploads \
     && chmod -R 755 /var/www/html/logs
 
-# Configurar Apache para permitir .htaccess
+# Permitir .htaccess
 RUN echo '<Directory /var/www/html>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
     Require all granted\n\
-</Directory>' > /etc/apache2/conf-available/redlinecrew.conf \
-    && a2enconf redlinecrew
+</Directory>' > /etc/apache2/conf-available/app.conf \
+    && a2enconf app
 
-# Evitar warning de Apache
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# Script de arranque
+# Script de arranque (puerto dinámico Render)
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
