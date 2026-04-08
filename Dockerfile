@@ -9,6 +9,12 @@ RUN a2enmod rewrite
 # Copiar todos los archivos del proyecto
 COPY . /var/www/html/
 
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
+
+
 # Dar permisos a carpetas de uploads y logs
 RUN mkdir -p /var/www/html/uploads/products \
              /var/www/html/uploads/avatars \
@@ -26,9 +32,6 @@ RUN echo '<Directory /var/www/html>\n\
 </Directory>' > /etc/apache2/conf-available/redlinecrew.conf \
     && a2enconf redlinecrew
 
-# Render usa la variable PORT — Apache escucha en ese puerto
-RUN sed -i 's/Listen 80/Listen ${PORT:-80}/' /etc/apache2/ports.conf \
-    && sed -i 's/:80>/:${PORT:-80}>/' /etc/apache2/sites-enabled/000-default.conf
 
 EXPOSE 80
 
