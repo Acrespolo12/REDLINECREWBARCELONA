@@ -9,12 +9,6 @@ RUN a2enmod rewrite
 # Copiar todos los archivos del proyecto
 COPY . /var/www/html/
 
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"]
-
-
 # Dar permisos a carpetas de uploads y logs
 RUN mkdir -p /var/www/html/uploads/products \
              /var/www/html/uploads/avatars \
@@ -32,6 +26,11 @@ RUN echo '<Directory /var/www/html>\n\
 </Directory>' > /etc/apache2/conf-available/redlinecrew.conf \
     && a2enconf redlinecrew
 
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
 
 EXPOSE 80
 
