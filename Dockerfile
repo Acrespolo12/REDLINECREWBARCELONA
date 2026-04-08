@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.2.0-apache
 
 # Instalar extensiones PHP necesarias
 RUN docker-php-ext-install pdo pdo_mysql mysqli
@@ -26,12 +26,13 @@ RUN echo '<Directory /var/www/html>\n\
 </Directory>' > /etc/apache2/conf-available/redlinecrew.conf \
     && a2enconf redlinecrew
 
+# Evitar warning de Apache
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
+# Script de arranque
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-CMD ["/start.sh"]
-
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/start.sh"]
